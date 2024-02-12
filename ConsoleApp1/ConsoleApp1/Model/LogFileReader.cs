@@ -4,13 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace BlazorApp1.Components.Models;
-
-public class LogFileReader
+namespace BlazorApp1.Components.Models
+{
+    public class LogFileReader
     {
-        private List<LogEintrag> Logeintraege = new List<LogEintrag>();
+        private List<LogEintrag> LogEintraege = new List<LogEintrag>();
 
-        public string Path { get; private set; }
+        public string FilePath { get; private set; }
         public string FileContent { get; private set; }
         public string[] SplitContent { get; private set; }
 
@@ -18,8 +18,8 @@ public class LogFileReader
         {
             if (File.Exists(path))
             {
-                this.Path = path;
-                Console.WriteLine("Beliebege Taste drücken, um Ergebnisse auszugeben");
+                this.FilePath = path;
+                Console.WriteLine("Beliebige Taste drücken, um Ergebnisse auszugeben");
             }
             else
             {
@@ -35,50 +35,63 @@ public class LogFileReader
 
         public void ReadContent()
         {
-            FileContent = File.ReadAllText(this.Path);
+            FileContent = File.ReadAllText(this.FilePath);
         }
 
         public void SplitFileContent()
         {
             SplitContent = this.FileContent.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
         }
-
-        public void StarteConvertToLogEintag()
+        
+        private void PrintIPFrequency()
         {
-            foreach (var eintrag in SplitContent)
+            var ipFrequency = LogEintraege.GroupBy(x => x.SourceIP)
+                .Select(g => new { IP = g.Key, Count = g.Count() })
+                .OrderByDescending(x => x.Count);
+
+            foreach (var item in ipFrequency)
             {
-                LogEintrag responese = ConvertStringToLogEintrag(eintrag);
-                this.Logeintraege.Add(responese);
+                Console.WriteLine($"IP-Adresse: {item.IP}, Häufigkeit: {item.Count}");
             }
         }
 
-        
+        public void StartConvertToLogEntry()
+        {
+            foreach (var entry in SplitContent)
+            {
+                LogEintrag response = ConvertStringToLogEntry(entry);
+                this.LogEintraege.Add(response);
+            }
+
+            PrintIPFrequency();
+        }
+
         public void SaveToCSV(string csvFilePath)
         {
             try
             {
-                using (StreamWriter writer = new StreamWriter(csvFilePath))
+                string fullPath = Path.Combine("C:\\Users\\Maximilian.Scholz\\GitHubCode", csvFilePath);
+                using (StreamWriter writer = new StreamWriter(fullPath))
                 {
-                    foreach (var eintrag in Logeintraege)
+                    foreach (var entry in LogEintraege)
                     {
-                        string line = $"{eintrag.date},{eintrag.id},{eintrag.severity},{eintrag.sys},{eintrag.sub},{eintrag.name},{eintrag.action},{eintrag.fwrule},{eintrag.initf},{eintrag.srcmac},{eintrag.dstmac},{eintrag.srcip},{eintrag.dstip},{eintrag.proto},{eintrag.length},{eintrag.tos},{eintrag.prec},{eintrag.ttl},{eintrag.srcport},{eintrag.dstport},{eintrag.tcpflags}";
+                        string line = $"{entry.Date},{entry.ID},{entry.Severity},{entry.Sys},{entry.Sub},{entry.Name},{entry.Action},{entry.FWRule},{entry.Initf},{entry.SourceMAC},{entry.DestinationMAC},{entry.SourceIP},{entry.DestinationIP},{entry.Protocol},{entry.Length},{entry.Tos},{entry.Prec},{entry.TTL},{entry.SourcePort},{entry.DestinationPort},{entry.TCPFlags}";
                         writer.WriteLine(line);
                     }
                 }
 
-                Console.WriteLine($"Die Ausgabe wurde erfolgreich in die CSV-Datei '{csvFilePath}' gespeichert.");
+                Console.WriteLine($"Die Ausgabe wurde erfolgreich in die CSV-Datei '{fullPath}' gespeichert.");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Fehler beim Speichern der Ausgabe in die CSV-Datei: {ex.Message}");
             }
         }
-        
 
-        private LogEintrag ConvertStringToLogEintrag(string logEintrag)
+        public LogEintrag ConvertStringToLogEntry(string logEntry)
         {
-            LogEintrag newLogEintrag = new LogEintrag();
-            var splitLogContent = logEintrag.Split(" ");
+            LogEintrag newLogEntry = new LogEintrag();
+            var splitLogContent = logEntry.Split(" ");
             Regex rx = new Regex("\"(.*?)\"");
 
             for (int i = 0; i < splitLogContent.Length; i++)
@@ -88,93 +101,93 @@ public class LogFileReader
                 {
                     var date = splitLogContent[i];
                     DateTime createDate = DateTime.Now;
-                    var jahr = date.Substring(0, 10);
-                    var uhr = date.Substring(11, 8);
-                    jahr = jahr.Replace(':', '/');
-                    newLogEintrag.date = Convert.ToDateTime(DateTime.Parse($"{jahr} {uhr}"));
+                    var year = date.Substring(0, 10);
+                    var time = date.Substring(11, 8);
+                    year = year.Replace(':', '/');
+                    newLogEntry.Date = Convert.ToDateTime(DateTime.Parse($"{year} {time}"));
                 }
 
                 if (splitLogContent[i].Contains("id")){
-                    newLogEintrag.id = Convert.ToInt32(value);
+                    newLogEntry.ID = Convert.ToInt32(value);
                 }
                 
                 if (splitLogContent[i].Contains("severity")){
-                    newLogEintrag.severity = value;
+                    newLogEntry.Severity = value;
                 }
                 
                 if (splitLogContent[i].Contains("sys")){
-                    newLogEintrag.sys = value;
+                    newLogEntry.Sys = value;
                 }
 
                 if (splitLogContent[i].Contains("sub")){                   
-                    newLogEintrag.sub = value;
+                    newLogEntry.Sub = value;
                 }
                
                 if (splitLogContent[i].Contains("name")){
-                    newLogEintrag.name = value;
+                    newLogEntry.Name = value;
                 }
                 
                 if (splitLogContent[i].Contains("action")){
-                    newLogEintrag.action = value;
+                    newLogEntry.Action = value;
                 }
                 
                 if (splitLogContent[i].Contains("fwrule")){
-                    newLogEintrag.fwrule = Convert.ToInt32(value);
+                    newLogEntry.FWRule = Convert.ToInt32(value);
                 }
 
                 if (splitLogContent[i].Contains("initf")){
-                    newLogEintrag.initf = value;
+                    newLogEntry.Initf = value;
                 }
 
                 if (splitLogContent[i].Contains("srcmac")){
-                    newLogEintrag.srcmac = value;
+                    newLogEntry.SourceMAC = value;
                 }
                 
                 if (splitLogContent[i].Contains("dstmac")){
-                    newLogEintrag.dstmac = value;
+                    newLogEntry.DestinationMAC = value;
                 }
                 
                 if (splitLogContent[i].Contains("srcip")){
-                    newLogEintrag.srcip = value;
+                    newLogEntry.SourceIP = value;
                 }
 
                 if (splitLogContent[i].Contains("dstip")){
-                    newLogEintrag.dstip = value;
+                    newLogEntry.DestinationIP = value;
                 }
 
                 if (splitLogContent[i].Contains("proto")){
-                    newLogEintrag.proto = Convert.ToInt32(value);
+                    newLogEntry.Protocol = Convert.ToInt32(value);
                 }
 
                 if (splitLogContent[i].Contains("length")){
-                    newLogEintrag.length = Convert.ToInt32(value);
+                    newLogEntry.Length = Convert.ToInt32(value);
                 }
                 
                 if (splitLogContent[i].Contains("tos")){
-                    newLogEintrag.tos = value;
+                    newLogEntry.Tos = value;
                 }
 
                 if (splitLogContent[i].Contains("prec")){
-                    newLogEintrag.prec = value;
+                    newLogEntry.Prec = value;
                 }
 
                 if (splitLogContent[i].Contains("ttl")){
-                    newLogEintrag.ttl = Convert.ToInt32(value);
+                    newLogEntry.TTL = Convert.ToInt32(value);
                 }
 
                 if (splitLogContent[i].Contains("srcport")){
-                    newLogEintrag.srcport = Convert.ToInt32(value);
+                    newLogEntry.SourcePort = Convert.ToInt32(value);
                 }
 
                 if (splitLogContent[i].Contains("dstport")){
-                    newLogEintrag.dstport = Convert.ToInt32(value);
+                    newLogEntry.DestinationPort = Convert.ToInt32(value);
                 }
 
                 if (splitLogContent[i].Contains("tcpflags")){
-                    newLogEintrag.tcpflags = value;
+                    newLogEntry.TCPFlags = value;
                 }
             }
-            return newLogEintrag;
+            return newLogEntry;
         }
-
     }
+}

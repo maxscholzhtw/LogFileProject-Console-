@@ -1,53 +1,26 @@
-namespace BlazorApp1.Components.Models;
-
 public class LogEintrag
 {
-    public DateTime date { get; set; }
-    public int id { get; set; }
+    public DateTime Date { get; set; }
+    public int ID { get; set; }
+    public string Severity { get; set; }
+    public string Sys { get; set; }
+    public string Sub { get; set; }
+    public string Name { get; set; }
+    public string Action { get; set; }
+    public int FWRule { get; set; }
+    public string Initf { get; set; }
+    public string SourceMAC { get; set; }
+    public string DestinationMAC { get; set; }
+    public string SourceIP { get; set; }
+    public string DestinationIP { get; set; }
+    public int Protocol { get; set; }
+    public int Length { get; set; }
+    public string Tos { get; set; }
+    public string Prec { get; set; }
+    public int TTL { get; set; }
+    public int SourcePort { get; set; }
+    public int DestinationPort { get; set; }
+    public string TCPFlags { get; set; }
 
-    public string severity { get; set; }
-
-    public string sys { get; set; }
-
-    public string sub { get; set; }
-
-    public string name { get; set; }
-
-    public string action { get; set; }
-
-    public int fwrule { get; set; }
-
-    public string initf { get; set; }
-
-    public string srcmac { get; set; }
-
-    public string dstmac { get; set; }
-
-    public string srcip { get; set; }
-
-    public string dstip { get; set; }
-
-    public int proto { get; set; }
-
-    public int length { get; set; }
-
-    public string tos { get; set; }
-
-    public string prec { get; set; }
-
-    public int ttl { get; set; }
-
-    public int srcport { get; set; }
-
-    public int dstport { get; set; }
-
-    public string tcpflags { get; set; }
-
-#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
-    public LogEintrag()
-#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
-    {
-
-
-    }
+    public LogEintrag() { }
 }
