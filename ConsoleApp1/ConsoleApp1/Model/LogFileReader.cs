@@ -8,22 +8,23 @@ namespace BlazorApp1.Components.Models
 {
     public class LogFileReader
     {
-        private List<LogEintrag> LogEintraege = new List<LogEintrag>();
+        public List<LogEintrag> LogEintraege { get; } = new List<LogEintrag>(); // Liste ohne redundante Typspezifikation
 
-        public string FilePath { get; private set; }
+        public string logFilePath { get; } // Nur get; verwenden, da die Eigenschaft nur im Konstruktor gesetzt wird
+
         public string FileContent { get; private set; }
         public string[] SplitContent { get; private set; }
 
-        public LogFileReader(string path)
+        public LogFileReader(string logFilePath)
         {
-            if (File.Exists(path))
+            this.logFilePath = logFilePath;
+            if (File.Exists(logFilePath))
             {
-                this.FilePath = path;
                 Console.WriteLine("Beliebige Taste drücken, um Ergebnisse auszugeben");
             }
             else
             {
-                throw new Exception($"Die Datei im Pfad:{path} wurde nicht gefunden.");
+                throw new Exception($"Die Datei im Pfad:{logFilePath} wurde nicht gefunden.");
             }
         }
 
@@ -33,17 +34,32 @@ namespace BlazorApp1.Components.Models
             Console.WriteLine($"Anzahl der Wörter in der Datei: {wordCount}");
         }
 
-        public void ReadContent()
-        {
-            FileContent = File.ReadAllText(this.FilePath);
-        }
+          public void ReadContent()
+          {
+                try
+                {
+                    FileContent = File.ReadAllText(logFilePath);
+                }
+                catch (Exception ex)
+                { 
+                    Console.WriteLine("");
+                    Console.WriteLine($"Fehler beim Lesen der Datei: {ex.Message}");
+                }
+          }
 
-        public void SplitFileContent()
-        {
-            SplitContent = this.FileContent.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-        }
+          public void SplitFileContent()
+          {
+              try
+              {
+                  SplitContent = FileContent.Split('\n');
+              }
+              catch (Exception ex)
+              {
+                  Console.WriteLine($"Fehler beim Aufteilen des Dateiinhalts: {ex.Message}");
+              }
+          }
         
-        private void PrintIPFrequency()
+        public void PrintIPFrequency()
         {
             var ipFrequency = LogEintraege.GroupBy(x => x.SourceIP)
                 .Select(g => new { IP = g.Key, Count = g.Count() })
@@ -55,16 +71,20 @@ namespace BlazorApp1.Components.Models
             }
         }
 
-        public void StartConvertToLogEntry()
-        {
-            foreach (var entry in SplitContent)
-            {
-                LogEintrag response = ConvertStringToLogEntry(entry);
-                this.LogEintraege.Add(response);
-            }
-
-            PrintIPFrequency();
-        }
+          public void StartConvertToLogEntry()
+          {
+                try
+                {
+                 foreach (var entry in SplitContent)
+                 {
+                      LogEintraege.Add(ConvertStringToLogEntry(entry));
+                 }
+                }
+                catch (Exception ex)
+                {
+                 Console.WriteLine($"Fehler beim Konvertieren des Dateiinhalts in Log-Einträge: {ex.Message}");
+                }
+          }
 
         public void SaveToCSV(string csvFilePath)
         {
@@ -75,7 +95,7 @@ namespace BlazorApp1.Components.Models
                 {
                     foreach (var entry in LogEintraege)
                     {
-                        string line = $"{entry.Date},{entry.ID},{entry.Severity},{entry.Sys},{entry.Sub},{entry.Name},{entry.Action},{entry.FWRule},{entry.Initf},{entry.SourceMAC},{entry.DestinationMAC},{entry.SourceIP},{entry.DestinationIP},{entry.Protocol},{entry.Length},{entry.Tos},{entry.Prec},{entry.TTL},{entry.SourcePort},{entry.DestinationPort},{entry.TCPFlags}";
+                        string line = $"{entry.ID},{entry.Severity},{entry.Sys},{entry.Sub},{entry.Name},{entry.Action},{entry.FWRule},{entry.Initf},{entry.SourceMAC},{entry.DestinationMAC},{entry.SourceIP},{entry.DestinationIP},{entry.Protocol},{entry.Length},{entry.Tos},{entry.Prec},{entry.TTL},{entry.SourcePort},{entry.DestinationPort},{entry.TCPFlags}";
                         writer.WriteLine(line);
                     }
                 }
@@ -91,22 +111,26 @@ namespace BlazorApp1.Components.Models
         public LogEintrag ConvertStringToLogEntry(string logEntry)
         {
             LogEintrag newLogEntry = new LogEintrag();
-            var splitLogContent = logEntry.Split(" ");
+            var splitLogContent = logEntry.Split(' '); // Splitte die Zeichenfolge am Leerzeichen
             Regex rx = new Regex("\"(.*?)\"");
 
             for (int i = 0; i < splitLogContent.Length; i++)
             {
                 var value = rx.Match(splitLogContent[i]).Groups[1].Value;
+
+                /*
                 if (i == 0)
                 {
-                    var date = splitLogContent[i];
-                    DateTime createDate = DateTime.Now;
-                    var year = date.Substring(0, 10);
-                    var time = date.Substring(11, 8);
-                    year = year.Replace(':', '/');
-                    newLogEntry.Date = Convert.ToDateTime(DateTime.Parse($"{year} {time}"));
+                    var datetimePart = logEntry.Substring(0, 19); // Die ersten 19 Zeichen für Datum und Uhrzeit
+                    var year = datetimePart.Substring(0, 4);
+                    var month = datetimePart.Substring(5, 2);
+                    var day = datetimePart.Substring(8, 2);
+                    var hour = datetimePart.Substring(11, 2);
+                    var minute = datetimePart.Substring(14, 2);
+                    var second = datetimePart.Substring(17, 2);
                 }
-
+                */
+                
                 if (splitLogContent[i].Contains("id")){
                     newLogEntry.ID = Convert.ToInt32(value);
                 }

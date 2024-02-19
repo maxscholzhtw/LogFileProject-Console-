@@ -11,7 +11,8 @@ namespace ConsoleApp
     {
         private static void Main(string[] args)
         {
-            string logFilePath = "\"C:\\Users\\Maximilian.Scholz\\GitHubCode\\LogFileProject-Console-\\FW-log(megaklein).txt\"";
+            string logFilePath =
+                "C:\\Users\\Maximilian.Scholz\\GitHubCode\\LogFileProject-Console-\\FW-log(klein).txt";
             LogFileReader test = new LogFileReader(logFilePath);
 
             ConsoleKeyInfo keyinfo;
@@ -21,9 +22,10 @@ namespace ConsoleApp
                 keyinfo = Console.ReadKey();
                 test.ReadContent();
                 test.SplitFileContent();
+                test.PrintIPFrequency();
                 test.StartConvertToLogEntry(); // Hier aufrufen
             } while (keyinfo.Key != ConsoleKey.X);
-    
+
             do
             {
                 keyinfo = Console.ReadKey();
@@ -35,6 +37,8 @@ namespace ConsoleApp
 
             LogFileReader reader = new LogFileReader(logFilePath);
             reader.StartConvertToLogEntry(); // Sicherstellen, dass auch hier die Einträge geladen werden
+            reader.ReadContent(); // Lesen Sie den Inhalt der Datei
+            reader.SplitFileContent(); // Dann teilen Sie den Inhalt auf
 
             reader.SaveToCSV(csvFilePath);
 
