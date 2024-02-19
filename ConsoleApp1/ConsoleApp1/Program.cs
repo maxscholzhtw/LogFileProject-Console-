@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using BlazorApp1.Components.Models;
+﻿using BlazorApp1.Components.Models;
 
 namespace ConsoleApp
 {
@@ -19,29 +14,19 @@ namespace ConsoleApp
 
             do
             {
-                keyinfo = Console.ReadKey();
                 test.ReadContent();
                 test.SplitFileContent();
                 test.PrintIPFrequency();
                 test.StartConvertToLogEntry(); // Hier aufrufen
+
+                keyinfo = Console.ReadKey(true); // Das Argument true bewirkt, dass die Eingabetaste nicht erwartet wird
             } while (keyinfo.Key != ConsoleKey.X);
 
-            do
-            {
-                keyinfo = Console.ReadKey();
-                test.Counter();
-            } while (keyinfo.Key != ConsoleKey.G);
-
+            // Speichern der CSV-Datei
             string csvFilePath = "output.csv";
             test.SaveToCSV(csvFilePath);
 
-            LogFileReader reader = new LogFileReader(logFilePath);
-            reader.StartConvertToLogEntry(); // Sicherstellen, dass auch hier die Einträge geladen werden
-            reader.ReadContent(); // Lesen Sie den Inhalt der Datei
-            reader.SplitFileContent(); // Dann teilen Sie den Inhalt auf
-
-            reader.SaveToCSV(csvFilePath);
-
+            // Überprüfen, ob die Datei erfolgreich erstellt wurde
             if (File.Exists(csvFilePath))
             {
                 Console.WriteLine("Die Datei wurde erfolgreich erstellt.");
@@ -50,9 +35,10 @@ namespace ConsoleApp
             {
                 Console.WriteLine("Die Datei wurde nicht erstellt.");
             }
+
+            Console.WriteLine("Das Programm wird beendet.");
         }
     }
 }
-
     
     

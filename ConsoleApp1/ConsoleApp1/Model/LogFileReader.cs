@@ -1,19 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace BlazorApp1.Components.Models
 {
     public class LogFileReader
     {
-        public List<LogEintrag> LogEintraege { get; } = new List<LogEintrag>(); // Liste ohne redundante Typspezifikation
+        public List<LogEintrag> LogEintraege { get; } = new List<LogEintrag>();
 
-        public string logFilePath { get; } // Nur get; verwenden, da die Eigenschaft nur im Konstruktor gesetzt wird
-
-        public string FileContent { get; private set; }
-        public string[] SplitContent { get; private set; }
+        public string logFilePath { get; }
+        public string FileContent { get; private set; } // nullable deklarieren
+        public string[] SplitContent { get; private set; } // nullable deklarieren
 
         public LogFileReader(string logFilePath)
         {
@@ -27,38 +22,38 @@ namespace BlazorApp1.Components.Models
                 throw new Exception($"Die Datei im Pfad:{logFilePath} wurde nicht gefunden.");
             }
         }
-
+        
         public void Counter()
         {
             int wordCount = FileContent.Count(c => c == ' ') + 1;
             Console.WriteLine($"Anzahl der Wörter in der Datei: {wordCount}");
         }
 
-          public void ReadContent()
-          {
-                try
-                {
-                    FileContent = File.ReadAllText(logFilePath);
-                }
-                catch (Exception ex)
-                { 
-                    Console.WriteLine("");
-                    Console.WriteLine($"Fehler beim Lesen der Datei: {ex.Message}");
-                }
-          }
+        public void ReadContent()
+        {
+            try
+            {
+                FileContent = File.ReadAllText(logFilePath);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("");
+                Console.WriteLine($"Fehler beim Lesen der Datei: {ex.Message}");
+            }
+        }
 
-          public void SplitFileContent()
-          {
-              try
-              {
-                  SplitContent = FileContent.Split('\n');
-              }
-              catch (Exception ex)
-              {
-                  Console.WriteLine($"Fehler beim Aufteilen des Dateiinhalts: {ex.Message}");
-              }
-          }
-        
+        public void SplitFileContent()
+        {
+            try
+            {
+                SplitContent = FileContent.Split('\n');
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Fehler beim Aufteilen des Dateiinhalts: {ex.Message}");
+            }
+        }
+
         public void PrintIPFrequency()
         {
             var ipFrequency = LogEintraege.GroupBy(x => x.SourceIP)
@@ -71,20 +66,20 @@ namespace BlazorApp1.Components.Models
             }
         }
 
-          public void StartConvertToLogEntry()
-          {
-                try
+        public void StartConvertToLogEntry()
+        {
+            try
+            {
+                foreach (var entry in SplitContent)
                 {
-                 foreach (var entry in SplitContent)
-                 {
-                      LogEintraege.Add(ConvertStringToLogEntry(entry));
-                 }
+                    LogEintraege.Add(ConvertStringToLogEntry(entry));
                 }
-                catch (Exception ex)
-                {
-                 Console.WriteLine($"Fehler beim Konvertieren des Dateiinhalts in Log-Einträge: {ex.Message}");
-                }
-          }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Fehler beim Konvertieren des Dateiinhalts in Log-Einträge: {ex.Message}");
+            }
+        }
 
         public void SaveToCSV(string csvFilePath)
         {
@@ -118,96 +113,103 @@ namespace BlazorApp1.Components.Models
             {
                 var value = rx.Match(splitLogContent[i]).Groups[1].Value;
 
-                /*
-                if (i == 0)
+                if (splitLogContent[i].Contains("id"))
                 {
-                    var datetimePart = logEntry.Substring(0, 19); // Die ersten 19 Zeichen für Datum und Uhrzeit
-                    var year = datetimePart.Substring(0, 4);
-                    var month = datetimePart.Substring(5, 2);
-                    var day = datetimePart.Substring(8, 2);
-                    var hour = datetimePart.Substring(11, 2);
-                    var minute = datetimePart.Substring(14, 2);
-                    var second = datetimePart.Substring(17, 2);
-                }
-                */
-                
-                if (splitLogContent[i].Contains("id")){
                     newLogEntry.ID = Convert.ToInt32(value);
                 }
-                
-                if (splitLogContent[i].Contains("severity")){
+
+                if (splitLogContent[i].Contains("severity"))
+                {
                     newLogEntry.Severity = value;
                 }
-                
-                if (splitLogContent[i].Contains("sys")){
+
+                if (splitLogContent[i].Contains("sys"))
+                {
                     newLogEntry.Sys = value;
                 }
 
-                if (splitLogContent[i].Contains("sub")){                   
+                if (splitLogContent[i].Contains("sub"))
+                {
                     newLogEntry.Sub = value;
                 }
-               
-                if (splitLogContent[i].Contains("name")){
+
+                if (splitLogContent[i].Contains("name"))
+                {
                     newLogEntry.Name = value;
                 }
-                
-                if (splitLogContent[i].Contains("action")){
+
+                if (splitLogContent[i].Contains("action"))
+                {
                     newLogEntry.Action = value;
                 }
-                
-                if (splitLogContent[i].Contains("fwrule")){
+
+                if (splitLogContent[i].Contains("fwrule"))
+                {
                     newLogEntry.FWRule = Convert.ToInt32(value);
                 }
 
-                if (splitLogContent[i].Contains("initf")){
+                if (splitLogContent[i].Contains("initf"))
+                {
                     newLogEntry.Initf = value;
                 }
 
-                if (splitLogContent[i].Contains("srcmac")){
+                if (splitLogContent[i].Contains("srcmac"))
+                {
                     newLogEntry.SourceMAC = value;
                 }
-                
-                if (splitLogContent[i].Contains("dstmac")){
+
+                if (splitLogContent[i].Contains("dstmac"))
+                {
                     newLogEntry.DestinationMAC = value;
                 }
-                
-                if (splitLogContent[i].Contains("srcip")){
+
+                if (splitLogContent[i].Contains("srcip"))
+                {
                     newLogEntry.SourceIP = value;
                 }
 
-                if (splitLogContent[i].Contains("dstip")){
+                if (splitLogContent[i].Contains("dstip"))
+                {
                     newLogEntry.DestinationIP = value;
                 }
 
-                if (splitLogContent[i].Contains("proto")){
+                if (splitLogContent[i].Contains("proto"))
+                {
                     newLogEntry.Protocol = Convert.ToInt32(value);
                 }
 
-                if (splitLogContent[i].Contains("length")){
+                if (splitLogContent[i].Contains("length"))
+                {
                     newLogEntry.Length = Convert.ToInt32(value);
                 }
-                
-                if (splitLogContent[i].Contains("tos")){
+
+                if (splitLogContent[i].Contains("tos"))
+                {
                     newLogEntry.Tos = value;
                 }
 
-                if (splitLogContent[i].Contains("prec")){
+                if (splitLogContent[i].Contains("prec"))
+                {
                     newLogEntry.Prec = value;
                 }
 
-                if (splitLogContent[i].Contains("ttl")){
+                if (splitLogContent[i].Contains("ttl"))
+                {
                     newLogEntry.TTL = Convert.ToInt32(value);
                 }
 
-                if (splitLogContent[i].Contains("srcport")){
+                if (splitLogContent[i].Contains("srcport"))
+                {
                     newLogEntry.SourcePort = Convert.ToInt32(value);
                 }
 
-                if (splitLogContent[i].Contains("dstport")){
+                if (splitLogContent[i].Contains("dstport"))
+                {
                     newLogEntry.DestinationPort = Convert.ToInt32(value);
                 }
 
-                if (splitLogContent[i].Contains("tcpflags")){
+                if (splitLogContent[i].Contains("tcpflags"))
+                {
                     newLogEntry.TCPFlags = value;
                 }
             }

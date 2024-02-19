@@ -21,6 +21,5 @@ public class LogEintrag
     public int DestinationPort { get; set; }
     public string? TCPFlags { get; set; }
 
-    public LogEintrag() { }
 }
 // Path: ConsoleApp1/Model/LogFileReader.cs
