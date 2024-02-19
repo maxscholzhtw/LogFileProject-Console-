@@ -1,7 +1,13 @@
 using System.Text.RegularExpressions;
 
-namespace BlazorApp1.Components.Models
+namespace ConsoleApp1.Model
 {
+    public class Format
+    {
+        public string IPAdresse;
+        public int Count;
+    }
+
     public class LogFileReader
     {
         public List<LogEintrag> LogEintraege { get; } = new List<LogEintrag>();
@@ -9,7 +15,7 @@ namespace BlazorApp1.Components.Models
         public string logFilePath { get; }
         public string FileContent { get; private set; } // nullable deklarieren
         public string[] SplitContent { get; private set; } // nullable deklarieren
-
+        
         public LogFileReader(string logFilePath)
         {
             this.logFilePath = logFilePath;
@@ -54,18 +60,24 @@ namespace BlazorApp1.Components.Models
             }
         }
 
-        public void PrintIPFrequency()
+        public List<Format> PrintIPFrequency()
         {
+            List<Format> _listipFrequency = new List<Format>();
+            
             var ipFrequency = LogEintraege.GroupBy(x => x.SourceIP)
                 .Select(g => new { IP = g.Key, Count = g.Count() })
                 .OrderByDescending(x => x.Count);
-
+            
+            
+            
             foreach (var item in ipFrequency)
             {
+                _listipFrequency.Add(new Format() {IPAdresse = item.IP, Count = item.Count});
                 Console.WriteLine($"IP-Adresse: {item.IP}, Häufigkeit: {item.Count}");
             }
+            return _listipFrequency;
         }
-
+        
         public void StartConvertToLogEntry()
         {
             try
@@ -74,33 +86,37 @@ namespace BlazorApp1.Components.Models
                 {
                     LogEintraege.Add(ConvertStringToLogEntry(entry));
                 }
+                Console.WriteLine("Die Datei wurde erfolgreich in Log-Einträge konvertiert.");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Fehler beim Konvertieren des Dateiinhalts in Log-Einträge: {ex.Message}");
             }
         }
-
-        public void SaveToCSV(string csvFilePath)
+        
+        public string SaveToCSV(string csvFilePath)
         {
             try
             {
                 string fullPath = Path.Combine("C:\\Users\\Maximilian.Scholz\\GitHubCode", csvFilePath);
                 using (StreamWriter writer = new StreamWriter(fullPath))
                 {
-                    foreach (var entry in LogEintraege)
+                    var list = PrintIPFrequency();
+                    foreach (var item in list)
                     {
-                        string line = $"{entry.ID},{entry.Severity},{entry.Sys},{entry.Sub},{entry.Name},{entry.Action},{entry.FWRule},{entry.Initf},{entry.SourceMAC},{entry.DestinationMAC},{entry.SourceIP},{entry.DestinationIP},{entry.Protocol},{entry.Length},{entry.Tos},{entry.Prec},{entry.TTL},{entry.SourcePort},{entry.DestinationPort},{entry.TCPFlags}";
-                        writer.WriteLine(line);
+                        writer.WriteLine($"{item.IPAdresse}; {item.Count}");
                     }
                 }
-
+                
                 Console.WriteLine($"Die Ausgabe wurde erfolgreich in die CSV-Datei '{fullPath}' gespeichert.");
+                return fullPath;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Fehler beim Speichern der Ausgabe in die CSV-Datei: {ex.Message}");
             }
+
+            return csvFilePath;
         }
 
         public LogEintrag ConvertStringToLogEntry(string logEntry)

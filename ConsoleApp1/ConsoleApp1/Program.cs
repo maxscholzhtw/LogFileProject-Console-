@@ -1,4 +1,4 @@
-﻿using BlazorApp1.Components.Models;
+﻿using ConsoleApp1.Model;
 
 namespace ConsoleApp
 {
@@ -11,25 +11,19 @@ namespace ConsoleApp
             LogFileReader test = new LogFileReader(logFilePath);
 
             ConsoleKeyInfo keyinfo;
-
-            do
-            {
+            
                 test.ReadContent();
                 test.SplitFileContent();
-                test.PrintIPFrequency();
-                test.StartConvertToLogEntry(); // Hier aufrufen
-
-                keyinfo = Console.ReadKey(true); // Das Argument true bewirkt, dass die Eingabetaste nicht erwartet wird
-            } while (keyinfo.Key != ConsoleKey.X);
-
+                test.StartConvertToLogEntry();
+                
             // Speichern der CSV-Datei
-            string csvFilePath = "output.csv";
-            test.SaveToCSV(csvFilePath);
+             string csvFilePath = "Blocked_IPs.csv";
+             csvFilePath = test.SaveToCSV(csvFilePath);
 
             // Überprüfen, ob die Datei erfolgreich erstellt wurde
             if (File.Exists(csvFilePath))
             {
-                Console.WriteLine("Die Datei wurde erfolgreich erstellt.");
+                Console.WriteLine("Fertig!");
             }
             else
             {
