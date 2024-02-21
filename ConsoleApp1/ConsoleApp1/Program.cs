@@ -6,19 +6,20 @@ namespace ConsoleApp
     {
         private static void Main(string[] args)
         {
-            string logFilePath =
-                "C:\\Users\\maxim\\WG\\Mike\\FW-log.txt";
+            Console.WriteLine("Bitte geben Sie den Dateipfad zur Logdatei ein:");
+            string logFilePath = Console.ReadLine();
+
             LogFileReader test = new LogFileReader(logFilePath);
 
             ConsoleKeyInfo keyinfo;
-            
-                test.ReadContent();
-                test.SplitFileContent();
-                test.StartConvertToLogEntry();
-                
+
+            test.ReadContent();
+            test.SplitFileContent();
+            test.StartConvertToLogEntry();
+
             // Speichern der CSV-Datei
-             string csvFilePath = "Blocked_IPs.csv";
-             csvFilePath = test.SaveToCSV(csvFilePath);
+            string csvFilePath = "Blocked_IPs.csv";
+            csvFilePath = test.SaveToCSV(csvFilePath);
 
             // Überprüfen, ob die Datei erfolgreich erstellt wurde
             if (File.Exists(csvFilePath))
