@@ -7,8 +7,11 @@ namespace ConsoleApp
         private static void Main(string[] args)
         {
             Console.WriteLine("Bitte geben Sie den Dateipfad zur Logdatei ein:");
-            string logFilePath = Console.ReadLine();
+            string logFilePath = Console.ReadLine().Trim('\"'); // Entferne Anführungszeichen;
 
+            Console.WriteLine("Bitte geben Sie den Dateipfad für die CSV-Datei ein:");
+            string csvFilePath = Console.ReadLine().Trim('\"'); // Entferne Anführungszeichen;;
+            
             LogFileReader test = new LogFileReader(logFilePath);
 
             ConsoleKeyInfo keyinfo;
@@ -18,7 +21,6 @@ namespace ConsoleApp
             test.StartConvertToLogEntry();
 
             // Speichern der CSV-Datei
-            string csvFilePath = "Blocked_IPs.csv";
             csvFilePath = test.SaveToCSV(csvFilePath);
 
             // Überprüfen, ob die Datei erfolgreich erstellt wurde

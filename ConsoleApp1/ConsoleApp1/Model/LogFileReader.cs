@@ -21,7 +21,10 @@ namespace ConsoleApp1.Model
             this.logFilePath = logFilePath;
             if (File.Exists(logFilePath))
             {
-                Console.WriteLine("Beliebige Taste drücken, um Ergebnisse auszugeben");
+                Console.WriteLine("");
+                Console.WriteLine("Pfad gefunden!");
+                Console.WriteLine("");
+
             }
             else
             {
@@ -40,6 +43,7 @@ namespace ConsoleApp1.Model
             try
             {
                 FileContent = File.ReadAllText(logFilePath);
+                Console.WriteLine("Die Datei wurde erfolgreich eingelesen!");
             }
             catch (Exception ex)
             {
@@ -53,6 +57,7 @@ namespace ConsoleApp1.Model
             try
             {
                 SplitContent = FileContent.Split('\n');
+                Console.WriteLine("Der Dateninhalt wurde erfolgreich aufgeteilt!");
             }
             catch (Exception ex)
             {
@@ -84,11 +89,13 @@ namespace ConsoleApp1.Model
                 {
                     LogEintraege.Add(ConvertStringToLogEntry(entry));
                 }
-                Console.WriteLine("Die Datei wurde erfolgreich in Log-Einträge konvertiert.");
+                Console.WriteLine("Die Datei wurde erfolgreich in Log-Einträge konvertiert!");
+                Console.WriteLine("");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Fehler beim Konvertieren des Dateiinhalts in Log-Einträge: {ex.Message}");
+                Console.WriteLine("");
             }
         }
         
@@ -96,7 +103,10 @@ namespace ConsoleApp1.Model
         {
             try
             {
-                string fullPath = Path.Combine("C:\\Users\\maxim\\WG\\Mike", csvFilePath);
+                // Kombiniere das Verzeichnis und den Dateinamen zu einem vollständigen Pfad
+                string fullPath = Path.Combine(csvFilePath, "Blocked_IPs.csv");
+
+                // Schreibe die CSV-Daten in die Datei
                 using (StreamWriter writer = new StreamWriter(fullPath))
                 {
                     var list = PrintIPFrequency();
@@ -106,12 +116,16 @@ namespace ConsoleApp1.Model
                     }
                 }
                 
-                Console.WriteLine($"Die Ausgabe wurde erfolgreich in die CSV-Datei '{fullPath}' gespeichert.");
+                Console.WriteLine("");
+                Console.WriteLine($"Die Ausgabe wurde erfolgreich in die CSV-Datei '{fullPath}' gespeichert!");
+                Console.WriteLine("");
+
                 return fullPath;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Fehler beim Speichern der Ausgabe in die CSV-Datei: {ex.Message}");
+                Console.WriteLine("");
             }
 
             return csvFilePath;
