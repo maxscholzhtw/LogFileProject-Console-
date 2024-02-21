@@ -7,7 +7,7 @@ namespace ConsoleApp
         private static void Main(string[] args)
         {
             string logFilePath =
-                "C:\\Users\\Maximilian.Scholz\\GitHubCode\\LogFileProject-Console-\\FW-log(klein).txt";
+                "C:\\Users\\maxim\\WG\\Mike\\FW-log.txt";
             LogFileReader test = new LogFileReader(logFilePath);
 
             ConsoleKeyInfo keyinfo;

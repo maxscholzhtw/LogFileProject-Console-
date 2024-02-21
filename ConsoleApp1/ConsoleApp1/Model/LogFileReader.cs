@@ -68,8 +68,6 @@ namespace ConsoleApp1.Model
                 .Select(g => new { IP = g.Key, Count = g.Count() })
                 .OrderByDescending(x => x.Count);
             
-            
-            
             foreach (var item in ipFrequency)
             {
                 _listipFrequency.Add(new Format() {IPAdresse = item.IP, Count = item.Count});
@@ -98,7 +96,7 @@ namespace ConsoleApp1.Model
         {
             try
             {
-                string fullPath = Path.Combine("C:\\Users\\Maximilian.Scholz\\GitHubCode", csvFilePath);
+                string fullPath = Path.Combine("C:\\Users\\maxim\\WG\\Mike", csvFilePath);
                 using (StreamWriter writer = new StreamWriter(fullPath))
                 {
                     var list = PrintIPFrequency();
