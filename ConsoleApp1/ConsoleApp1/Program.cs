@@ -45,6 +45,7 @@ namespace ConsoleApp
                 // Ausgabe der IP-Adressen mit ihrer Häufigkeit
                 PrintIPFrequency(test);
             }
+
             Console.WriteLine("");
             Console.WriteLine("Das Programm wird beendet.");
         }
@@ -53,15 +54,6 @@ namespace ConsoleApp
         {
             List<Format> ipFrequencyList = test.PrintIPFrequency();
             
-            if (ipFrequencyList.Count > 0)
-            {
-                Console.WriteLine("IP-Adressen mit ihrer Häufigkeit:");
-                foreach (var item in ipFrequencyList)
-                {
-                    Console.WriteLine($"IP-Adresse: {item.IPAdresse}, Häufigkeit: {item.Count}");
-                }
-            }
-            else
             {
                 Console.WriteLine("");
                 Console.WriteLine("Es wurden keine IP-Adressen gefunden.");
@@ -69,7 +61,6 @@ namespace ConsoleApp
         }
     }
 }
-
 
 //Change
     
