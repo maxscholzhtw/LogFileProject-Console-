@@ -6,37 +6,70 @@ namespace ConsoleApp
     {
         private static void Main(string[] args)
         {
-            Console.WriteLine("Bitte geben Sie den Dateipfad zur Logdatei ein:");
-            string logFilePath = Console.ReadLine().Trim('\"'); // Entferne Anführungszeichen;
+            LogFileReader test = null;
 
-            Console.WriteLine("Bitte geben Sie den Dateipfad für die CSV-Datei ein:");
-            string csvFilePath = Console.ReadLine().Trim('\"'); // Entferne Anführungszeichen;;
-            
-            LogFileReader test = new LogFileReader(logFilePath);
+            Console.WriteLine("Möchten Sie eine CSV-Datei erstellen? (ja/nein):");
+            string createCSV = Console.ReadLine().ToLower();
 
-            ConsoleKeyInfo keyinfo;
-
-            test.ReadContent();
-            test.SplitFileContent();
-            test.StartConvertToLogEntry();
-
-            // Speichern der CSV-Datei
-            csvFilePath = test.SaveToCSV(csvFilePath);
-
-            // Überprüfen, ob die Datei erfolgreich erstellt wurde
-            if (File.Exists(csvFilePath))
+            if (createCSV == "ja")
             {
-                Console.WriteLine("Fertig!");
+                Console.WriteLine("Bitte geben Sie den Dateipfad zur Logdatei ein:");
+                string logFilePath = Console.ReadLine().Trim('\"'); // Entferne Anführungszeichen
+
+                test = new LogFileReader(logFilePath);
+
+                test.ReadContent();
+                test.SplitFileContent();
+                test.StartConvertToLogEntry();
+
+                Console.WriteLine("Bitte geben Sie den Dateipfad für die CSV-Datei ein:");
+                string csvFilePath = Console.ReadLine().Trim('\"'); // Entferne Anführungszeichen
+
+                // Speichern der CSV-Datei
+                Console.WriteLine("");
+                csvFilePath = test.SaveToCSV(csvFilePath);
+                Console.WriteLine("");
+                Console.WriteLine($"Die CSV-Datei wurde erfolgreich erstellt! Pfad: {csvFilePath}");
             }
             else
             {
-                Console.WriteLine("Die Datei wurde nicht erstellt.");
-            }
+                Console.WriteLine("Bitte geben Sie den Dateipfad zur Logdatei ein:");
+                string logFilePath = Console.ReadLine().Trim('\"'); // Entferne Anführungszeichen
 
+                test = new LogFileReader(logFilePath);
+
+                test.ReadContent();
+                test.SplitFileContent();
+                test.StartConvertToLogEntry();
+
+                // Ausgabe der IP-Adressen mit ihrer Häufigkeit
+                PrintIPFrequency(test);
+            }
+            Console.WriteLine("");
             Console.WriteLine("Das Programm wird beendet.");
+        }
+
+        private static void PrintIPFrequency(LogFileReader test)
+        {
+            List<Format> ipFrequencyList = test.PrintIPFrequency();
+            
+            if (ipFrequencyList.Count > 0)
+            {
+                Console.WriteLine("IP-Adressen mit ihrer Häufigkeit:");
+                foreach (var item in ipFrequencyList)
+                {
+                    Console.WriteLine($"IP-Adresse: {item.IPAdresse}, Häufigkeit: {item.Count}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("");
+                Console.WriteLine("Es wurden keine IP-Adressen gefunden.");
+            }
         }
     }
 }
+
 
 //Change
     

@@ -24,7 +24,6 @@ namespace ConsoleApp1.Model
                 Console.WriteLine("");
                 Console.WriteLine("Pfad gefunden!");
                 Console.WriteLine("");
-
             }
             else
             {
@@ -110,10 +109,6 @@ namespace ConsoleApp1.Model
                     }
                 }
                 
-                Console.WriteLine("");
-                Console.WriteLine($"Die Ausgabe wurde erfolgreich in die CSV-Datei '{fullPath}' gespeichert!");
-                Console.WriteLine("");
-
                 return fullPath;
             }
             catch (Exception ex)
