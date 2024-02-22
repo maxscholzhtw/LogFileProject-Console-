@@ -31,12 +31,6 @@ namespace ConsoleApp1.Model
                 throw new Exception($"Die Datei im Pfad:{logFilePath} wurde nicht gefunden.");
             }
         }
-        
-        public void Counter()
-        {
-            int wordCount = FileContent.Count(c => c == ' ') + 1;
-            Console.WriteLine($"Anzahl der Wörter in der Datei: {wordCount}");
-        }
 
         public void ReadContent()
         {
