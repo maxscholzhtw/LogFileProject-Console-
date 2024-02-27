@@ -23,6 +23,7 @@ namespace ConsoleApp
                     if (createCSV != "ja" && createCSV != "nein")
                     {
                         Console.WriteLine("Falsche Eingabe!");
+                        Console.WriteLine("");
                     }
                 } while (createCSV != "ja" && createCSV != "nein");
 
@@ -46,9 +47,8 @@ namespace ConsoleApp
 
                             // Speichern der CSV-Datei
                             Console.WriteLine("");
-                            csvFilePath = test.SaveToCSV(csvFilePath);
-                            Console.WriteLine("");
-                            Console.WriteLine($"Die CSV-Datei wurde erfolgreich erstellt! Pfad: {csvFilePath}");
+                            test.SaveToCSV(csvFilePath);
+
                         }
                         catch
                         {
@@ -100,6 +100,8 @@ namespace ConsoleApp
                         Console.WriteLine("Falsche Eingabe!");
                     }
                 } while (endProgram != "ja" && endProgram != "nein");
+                
+                Console.WriteLine("");
 
                 // Verarbeitung entsprechend der Antwort
                 switch (endProgram)

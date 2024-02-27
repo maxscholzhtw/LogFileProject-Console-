@@ -109,6 +109,8 @@ namespace ConsoleApp1.Model
                     }
                 }
                 
+                Console.WriteLine("");
+                Console.WriteLine($"Die CSV-Datei wurde erfolgreich erstellt! Pfad: {csvFilePath}");
                 return fullPath;
             }
             catch (Exception ex)
